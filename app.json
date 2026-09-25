@@ -20,7 +20,20 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.rperezt.swifty-companion"
+      "bundleIdentifier": "com.rperezt.swifty-companion",
+      "infoPlist": {
+        "UIApplicationSceneManifest": {
+          "UIApplicationSupportsMultipleScenes": false,
+          "UISceneConfigurations": {
+            "UIWindowSceneSessionRoleApplication": [
+              {
+                "UISceneConfigurationName": "Default Configuration",
+                "UISceneDelegateClassName": "$(PRODUCT_MODULE_NAME).SceneDelegate"
+              }
+            ]
+          }
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
