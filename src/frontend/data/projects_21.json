@@ -3379,7 +3379,7 @@
     },
     {
       "id": 2071,
-      "name": " Bgp At Doors of Autonomous Systems is Simple",
+      "name": "BADASS",
       "slug": "bgp-at-doors-of-autonomous-systems-is-simple",
       "difficulty": 22450,
       "completions": 424,
@@ -6019,6 +6019,58 @@
           "id": 1607
         }
       ]
+    },
+    {
+      "id": 900001,
+      "name": "RetroEmu",
+      "slug": "retroemu",
+      "difficulty": 37800,
+      "completions": 0,
+      "duration": 0,
+      "created_at": "2025-01-01T00:00:00.000000+00:00",
+      "updated_at": "2025-01-01T00:00:00.000000+00:00",
+      "exam": false,
+      "parent": null,
+      "children": []
+    },
+    {
+      "id": 900002,
+      "name": "Inception of context",
+      "slug": "inception-of-context",
+      "difficulty": 19800,
+      "completions": 0,
+      "duration": 0,
+      "created_at": "2025-01-01T00:00:00.000000+00:00",
+      "updated_at": "2025-01-01T00:00:00.000000+00:00",
+      "exam": false,
+      "parent": null,
+      "children": []
+    },
+    {
+      "id": 900003,
+      "name": "Inception of wisdom",
+      "slug": "inception-of-wisdom",
+      "difficulty": 21600,
+      "completions": 0,
+      "duration": 0,
+      "created_at": "2025-01-01T00:00:00.000000+00:00",
+      "updated_at": "2025-01-01T00:00:00.000000+00:00",
+      "exam": false,
+      "parent": null,
+      "children": []
+    },
+    {
+      "id": 900004,
+      "name": "ft_lgtm",
+      "slug": "ft_lgtm",
+      "difficulty": 16200,
+      "completions": 0,
+      "duration": 0,
+      "created_at": "2025-01-01T00:00:00.000000+00:00",
+      "updated_at": "2025-01-01T00:00:00.000000+00:00",
+      "exam": false,
+      "parent": null,
+      "children": []
     }
   ]
 }
