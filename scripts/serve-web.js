@@ -31,6 +31,18 @@ const contentTypes = {
   '.txt': 'text/plain; charset=utf-8',
 };
 
+const upstreamHeaders = {
+  'User-Agent': process.env.UPSTREAM_USER_AGENT || '42tools-web-proxy/1.0 (+https://github.com/)',
+  Accept: 'application/json',
+};
+
+function isCloudflareChallenge(response, content) {
+  return (
+    response.headers.get('cf-mitigated') === 'challenge' ||
+    (response.status === 403 && /<title>Just a moment|_cf_chl_opt/i.test(content))
+  );
+}
+
 function sendText(res, status, text) {
   res.writeHead(status, { 'Content-Type': 'text/plain; charset=utf-8' });
   res.end(text);
@@ -127,11 +139,21 @@ async function proxyTokenRequest(req, res) {
     const tokenResponse = await fetch(`${apiBaseUrl}/oauth/token`, {
       method: 'POST',
       headers: {
+        ...upstreamHeaders,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: params.toString(),
     });
     const content = await tokenResponse.text();
+    if (isCloudflareChallenge(tokenResponse, content)) {
+      console.error(`[42 OAuth] Cloudflare challenge on token exchange (status ${tokenResponse.status})`);
+      res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({
+        error: 'cloudflare_challenge',
+        error_description: 'api.intra.42.fr blocked the server request with a Cloudflare challenge. The hosting IP is being flagged as a bot.',
+      }));
+      return;
+    }
     res.writeHead(tokenResponse.status, {
       'Content-Type': tokenResponse.headers.get('content-type') || 'application/json; charset=utf-8',
       'x-42tools-client-id': maskValue(ftClientId),
@@ -146,7 +168,7 @@ async function proxyApiRequest(req, res) {
   try {
     const targetPath = req.url.slice('/api'.length) || '/';
     const body = req.method === 'GET' || req.method === 'HEAD' ? undefined : await readRequestBody(req);
-    const headers = {};
+    const headers = { ...upstreamHeaders };
     if (req.headers.authorization) {
       headers.authorization = req.headers.authorization;
     }
