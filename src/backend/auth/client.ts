@@ -197,6 +197,13 @@ export async function consumeWebLoginCode() {
   }
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
+  const oauthError = params.get('error');
+  if (oauthError && !code) {
+    const description = params.get('error_description');
+    sessionStorage.removeItem(WEB_OAUTH_STORAGE_KEY);
+    cleanWebOAuthUrl();
+    throw new Error(`OAuth login failed: ${[oauthError, description].filter(Boolean).join(' | ')}`);
+  }
   if (!code) {
     return null;
   }

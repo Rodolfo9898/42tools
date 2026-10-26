@@ -7,6 +7,7 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   loading: boolean;
   user: MeProfile | null;
+  error: string | null;
   login: () => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -16,6 +17,7 @@ const AuthContext = createContext<AuthContextValue>({
   isAuthenticated: false,
   loading: true,
   user: null,
+  error: null,
   login: async () => {},
   logout: async () => {},
   refreshUser: async () => {},
@@ -29,6 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<MeProfile | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const refreshUser = useCallback(async () => {
     console.info('[42 OAuth] fetching /v2/me');
@@ -39,6 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const bootstrap = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const authState = await getAuthState();
       if (!authState) {
@@ -50,6 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await refreshUser();
     } catch (err) {
       console.error('[42 OAuth] bootstrap failed', err);
+      setError(err instanceof Error ? err.message : 'Login failed. Please try again.');
       setIsAuthenticated(false);
       setUser(null);
     } finally {
@@ -63,6 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       await loginWith42();
       setIsAuthenticated(true);
@@ -70,6 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.info('[42 OAuth] login completed');
     } catch (err) {
       console.error('[42 OAuth] login failed', err);
+      setError(err instanceof Error ? err.message : 'Login failed. Please try again.');
       setIsAuthenticated(false);
       setUser(null);
       throw err;
@@ -90,8 +97,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ isAuthenticated, loading, user, login, logout, refreshUser }),
-    [isAuthenticated, loading, user, login, logout, refreshUser],
+    () => ({ isAuthenticated, loading, user, error, login, logout, refreshUser }),
+    [isAuthenticated, loading, user, error, login, logout, refreshUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

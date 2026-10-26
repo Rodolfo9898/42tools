@@ -8,7 +8,7 @@ import { useTheme } from '../ThemeContext';
 export default function LoginScreen() {
   const { colors } = useTheme();
   const styles = useMemo(() => createLoginStyles(colors), [colors]);
-  const { login } = useAuth();
+  const { login, error: authError } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -42,7 +42,7 @@ export default function LoginScreen() {
             <Text style={styles.buttonText}>Login with 42</Text>
           )}
         </TouchableOpacity>
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {error || authError ? <Text style={styles.error}>{error || authError}</Text> : null}
       </View>
     </View>
   );
